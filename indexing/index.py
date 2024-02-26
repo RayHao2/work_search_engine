@@ -41,22 +41,19 @@ def query():
             "match": {
                 "Qualifications": "MBA"
             }
-        }
+        },
+        "size": 100  # Change the size parameter to the desired number of results
     }
-    
     index_name = "jobs_index"
-    doc_count = es.count(index=index_name)['count']
-
-    # Print the document count
-    print(f"The number of documents in index '{index_name}' is: {doc_count}")
+ 
     
-    
-    # search_results = es.search(index=index_name, body=search_query)
+    search_results = es.search(index=index_name, body=search_query)
 
-    # with open("output.txt", "w") as f:
-    #     # Process search results
-    #     for hit in search_results['hits']['hits']:
-    #         print(hit['_source'], file=f)
+    with open("output.txt", "w") as f:
+        # Process search results
+        for hit in search_results['hits']['hits']:
+            print(hit['_source'], file=f)
+            
 
 
 def main():
