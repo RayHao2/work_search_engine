@@ -25,12 +25,17 @@ def process_doc():
         for line in f:
             processed_job = []
             job = word_tokenize(line)
-            print(job)
             for word in job:
-                word = stemmer.stem(word).lower()
+                word = word.lower()
                 processed_job.append(word)
             dataset.append(processed_job)
-    print(dataset)   
+    with open ("D:\schoolAndWork\large_files\job-titles-master\job-titles.txt", "r") as f:
+        for line in f:
+            processed_job = []
+            job = word_tokenize(line)
+            for word in job:
+                processed_job.append(word)
+            dataset.append(processed_job) 
     with open("dataset.pkl", "wb") as f:
         pickle.dump(dataset,f)
 
@@ -44,7 +49,9 @@ def train():
         dataset = pickle.load(f)
     cores = multiprocessing.cpu_count() 
     documents = [TaggedDocument(doc, [i]) for i, doc in enumerate(dataset)]
-    model = Doc2Vec(documents, vector_size=5, window=5, min_count=1, workers=cores-1)
+    model = Doc2Vec(vector_size = 350, min_count = 1, epochs = 30)
+    model.build_vocab(documents)
+    model.train(documents, total_examples=model.corpus_count, epochs=model.epochs)
     model.save("doc2vec.model")
 
 
@@ -52,11 +59,11 @@ def test():
     with open("dataset.pkl", "rb") as f:
         dataset = pickle.load(f)
     print("Reference Document:")
-    print(dataset[0])
+    print(dataset[1])
 
     model = Doc2Vec.load("doc2vec.model")
 
-    similar_docs = model.docvecs.most_similar(positive=[model.infer_vector(dataset[0])], topn=3)
+    similar_docs = model.docvecs.most_similar(positive=[model.infer_vector(["Software", "Developer"])], topn = 5)
 
     print("\nSimilar Documents:")
     for doc_index, similarity in similar_docs:
@@ -64,7 +71,7 @@ def test():
 
 
 def main():
-    # process_doc()
+    process_doc()
     train()
     test()
 
