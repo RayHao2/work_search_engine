@@ -59,11 +59,11 @@ def test():
     with open("dataset.pkl", "rb") as f:
         dataset = pickle.load(f)
     print("Reference Document:")
-    print(dataset[1])
+    print(dataset[3])
 
     model = Doc2Vec.load("doc2vec.model")
 
-    similar_docs = model.docvecs.most_similar(positive=[model.infer_vector(["Software", "Developer"])], topn = 5)
+    similar_docs = model.docvecs.most_similar(positive=[model.infer_vector(dataset[3])], topn = 5)
 
     print("\nSimilar Documents:")
     for doc_index, similarity in similar_docs:
@@ -71,8 +71,8 @@ def test():
 
 
 def main():
-    process_doc()
-    train()
+    # process_doc()
+    # train()
     test()
 
 if __name__ == "__main__":
